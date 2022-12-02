@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/arpy
+    username: postgres
+    password: example
+  jpa:
+    hibernate:
+      ddl-auto: update
+server:
+  error:
+    include-stacktrace: never
