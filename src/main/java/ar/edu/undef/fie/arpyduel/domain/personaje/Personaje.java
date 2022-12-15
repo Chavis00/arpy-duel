@@ -106,6 +106,10 @@ public class Personaje {
         if (nivel >= 30){
             return;
         }
+        setExperiencia(getExperiencia()-getExperienciaNecesaria());
+        setExperienciaNecesaria(getExperienciaNecesaria()*1.3);
+        if (getExperiencia()<0)
+            setExperiencia(0.0);
         nivel+=1;
         clase.subirEstadisticasNivel(this);
     }
@@ -224,17 +228,17 @@ public class Personaje {
         return this.dueloActual;
     }
 
-    public void equiparArmaClaim(){
-        this.armaEnUso = this.armaClaim;
+    public void equiparArmaClaim(Arma arma){
+        this.armaEnUso = arma;
         setArmaClaim(null);
     }
-    public void equiparArmaduraClaim(){
-        this.armaduraEnUso = this.armaduraClaim;
+    public void equiparArmaduraClaim(Armadura armadura){
+        this.armaduraEnUso = armadura;
         setArmaduraClaim(null);
     }
-    public void equiparItemClaim(){
-        this.armaduraEnUso = this.armaduraClaim;
-        setArmaduraClaim(null);
+    public void equiparItemClaim(Item item){
+        this.item = item;
+        setItemClaim(null);
     }
     /*
         GETTERS & SETTERS
@@ -447,13 +451,14 @@ public class Personaje {
 
 
     public Duelo terminarDuelo(Duelo duelo) {
+        if (this.isDead == true)
+                setDead(false);
         if (dueloActual.getGanador() == this){
             setExperiencia(dueloActual.getRival(this).getNivel()*3);
             setClaims(getClaims()+4);
         }
         if (getExperiencia() >= getExperienciaNecesaria()){
-            setExperiencia(getExperiencia()-getExperienciaNecesaria());
-            setExperienciaNecesaria(getExperienciaNecesaria()*1.3);
+
             subirNivel();
         }
         duelo.setPersonajes(duelo.getPersonajes().stream().filter(p->p==this).collect(Collectors.toList()));

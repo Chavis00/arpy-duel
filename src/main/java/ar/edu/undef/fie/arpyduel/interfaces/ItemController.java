@@ -17,49 +17,28 @@ import java.util.List;
 import java.util.Random;
 
 @RestController
-@RequestMapping("/api/item")
+@RequestMapping("/api/items")
 public class ItemController {
-    private final FindItemEfectoCommandQuery findItemEfecto;
-    private final FindItemCommandQueryt findItem;
-    private final ItemEfectoCommandService itemEfectoService;
     private final ItemCommandService itemService;
     private final FindPersonajeCommandQuery findPersonaje;
-    private final PersonajeCommandService personajeService;
 
-    public ItemController(FindItemEfectoCommandQuery findItem, FindItemCommandQueryt findItem1, ItemEfectoCommandService itemEfectoService, ItemCommandService itemService, FindPersonajeCommandQuery findPersonaje, PersonajeCommandService personajeService) {
-        this.findItemEfecto = findItem;
-        this.findItem = findItem1;
-        this.itemEfectoService = itemEfectoService;
+    public ItemController(ItemCommandService itemService, FindPersonajeCommandQuery findPersonaje) {
         this.itemService = itemService;
         this.findPersonaje = findPersonaje;
-        this.personajeService = personajeService;
     }
 
-    @PutMapping("/claim/generar/{meId}")
+    @PostMapping("/claim/personajes/{meId}")
     public ItemResponse generarClaim(@PathVariable Long meId) {
-        Personaje me = findPersonaje.get(meId).orElseThrow(() -> new RuntimeException("Personaje No encontrado"));
-        if (me.claimsVacios())
-            return null;
-
-        Random rn = new Random();
-        List<ItemEfecto> efectosExistentes = findItemEfecto.getAll();
-        ItemEfecto itemEfectoRandom = efectosExistentes.get(rn.nextInt((int) findItemEfecto.count()));
-        Item item = new Item(itemEfectoRandom);
-        itemService.save(item);
-        me.setItemClaim(item);
-        me.setClaims(me.getClaims()-1);
-        personajeService.save(me);
-
-        return item.response();
+        return itemService.
+                create(
+                        findPersonaje.
+                                get(meId).
+                                orElseThrow(
+                                        ()->new RuntimeException("Personaje No encontrado")
+                                )
+                ).
+                response();
     }
 
-    @GetMapping("/equipado/{meId}")
-    public ItemResponse getItemEquipado(@PathVariable Long meId){
-        return findPersonaje.
-                get(meId).
-                orElseThrow(() -> new RuntimeException("Personaje No encontrado")).
-                getItemOp().
-                map(Item::response).
-                orElseThrow(()->new RuntimeException("No existe un Item equipad"));
-    }
+
 }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/api/clase")
+@RequestMapping(value = "/api/clases")
 public class ClasesController {
     private final FindClaseCommandQuery find;
 
@@ -19,7 +19,7 @@ public class ClasesController {
     public ClasesController(FindClaseCommandQuery find) {
         this.find = find;
     }
-    @GetMapping("/all")
+    @GetMapping("/")
     public List<ClaseResponse> getClasesAll(){
         return find.getAll().
                 stream().

@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class findArmaduraCommandQuery {
+public class FindArmaduraCommandQuery {
     private final ArmaduraRepository repository;
 
-    public findArmaduraCommandQuery(ArmaduraRepository repository) {
+    public FindArmaduraCommandQuery(ArmaduraRepository repository) {
         this.repository = repository;
     }
 

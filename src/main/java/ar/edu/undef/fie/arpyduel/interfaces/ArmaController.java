@@ -19,7 +19,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/arma")
+@RequestMapping("/api/armas")
 public class ArmaController {
     private final FindArmaTipoCommandQuery findArmaTipo;
     private final FindPersonajeCommandQuery findPersonaje;
@@ -37,7 +37,7 @@ public class ArmaController {
         this.armaService = armaService;
         this.findEncantamiento = findEncantamiento;
     }
-    @GetMapping("/tipo/all")
+    @GetMapping("/tipos")
     public List<ArmaTipoResponse> getAllTiposArma(){
         return findArmaTipo.getAll().
                 stream().
@@ -45,37 +45,24 @@ public class ArmaController {
                 collect(Collectors.toList());
     }
 
-    @PutMapping("/claim/generar/{meId}/{armaTipoId}")
-    public ArmaResponse generarClaim(@PathVariable Long meId, @PathVariable Long armaTipoId){
-        Personaje me = findPersonaje.get(meId).orElseThrow(()->new RuntimeException("Personaje No encontrado"));
-        if (me.claimsVacios())
-            return null;
-        ArmaTipo tipo = findArmaTipo.get(armaTipoId).orElseThrow(()->new RuntimeException("Tipo de Arma No encontrado"));
-        Arma arma = new Arma(tipo);
-        Random rn = new Random();
-
-        arma.construirArma(me.getNivel());
-
-        List<Encantamiento> encantamientosDisponibles = findEncantamiento.getAll();
-        Encantamiento encantamientoRandom = encantamientosDisponibles.get(rn.nextInt((int) findEncantamiento.countEncantamientos()));
-        arma.setEncantamiento(encantamientoRandom);
-
-        me.setClaims(me.getClaims()-1);
-        me.claimArma(arma);
-        armaService.save(arma);
-        personajeService.save(me);
-
-        return arma.response();
+    @PostMapping("/claim/personajes/{meId}/tipos/{armaTipoId}")
+    public ArmaResponse generarClaim(@PathVariable Long meId,@PathVariable Long armaTipoId){
+        return armaService.
+                generarClaim(
+                        findPersonaje.
+                                get(meId).
+                                orElseThrow(
+                                        ()->new RuntimeException("Personaje No encontrado")
+                                ),
+                        findArmaTipo.
+                                get(armaTipoId).
+                                orElseThrow(
+                                        ()->new RuntimeException("Tipo de Arma No encontrado")
+                                )
+                ).
+                response();
     }
 
-    @GetMapping("/equipado/{meId}")
-    public ArmaResponse getItemEquipado(@PathVariable Long meId){
-        return findPersonaje.
-                get(meId).
-                orElseThrow(() -> new RuntimeException("Personaje No encontrado")).
-                getArmaEnUsoOp().
-                map(Arma::response).
-                orElseThrow(()->new RuntimeException("No existe un Arma equipada"));
-    }
+
 
 }
