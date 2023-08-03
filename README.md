@@ -71,16 +71,13 @@ Make sure you have a PostgreSQL database running. Then, execute the following co
 ```bash
 docker build -t arpyduel-backend .
 docker run --name arpyduel \
--e APP_PORT=8080 \
--e PSQL_DB_NAME=arpy \
--e PSQL_DB_HOST=127.0.0.1 \
--e PSQL_DB_PORT=5432 \
--e PSQL_DB_USER=postgres \
--e PSQL_DB_USER=postgres \
--e PSQL_DB_PASSWORD=example \
-simulador_db_loader  --plancomercial --compras --savelogs
-
-docker run -p 8080:8080 arpyduel-backend
+-e APP_PORT=YOUR-APP-PORT \
+-e PSQL_DB_NAME=YOUR-DB-NAME \
+-e PSQL_DB_HOST=YOUR-DB-HOST \
+-e PSQL_DB_PORT=YOUR-DB-PORT \
+-e PSQL_DB_USER=YOUR-DB-USER \
+-e PSQL_DB_PASSWORD=YOUR-DB-PASSWORD \
+arpyduel-backend
 ```
 
 ### Run with docker-compose (Recommended)
@@ -88,3 +85,16 @@ To run the application using docker-compose, create a .env file in the root dire
 ```bash
 docker-compose up --build
 ```
+## Extras
+### API Documentation
+The API documentation is available at http://localhost:8080/swagger-ui.html after running the application.
+### Testing
+The application has unit tests for the domain layer. To run the tests, execute the following command in the root directory of the project:
+```bash
+gradlew test
+```
+### Game Scalability
+The application is designed to be scalable. The following diagram shows the domain model of the application:
+![Class Diagram](https://github.com/Chavis00/arpy-duel/blob/main/domain-class-diagram.png?raw=true)
+
+The strategy pattern is used to implement the different behaviors of character classes, duel types, debuffs, weapon types and enchantments. This allows for easy extensibility of the application, as new classes can be added by implementing the corresponding interfaces and adding the new classes to the factory methods. 
