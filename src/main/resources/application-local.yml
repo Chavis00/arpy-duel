@@ -1,0 +1,35 @@
+application:
+  title: Arpy - Duel
+  version: 0.1.0
+
+logging:
+  level:
+    root: INFO
+    org:
+      hibernate: INFO
+      springframework:
+        web: INFO
+        security: INFO
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${PSQL_DB_HOST}:${PSQL_DB_PORT}/${PSQL_DB_NAME}?useSSL=false
+    username: ${PSQL_DB_USER}
+    password: ${PSQL_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+server:
+  port: ${APP_PORT}
+  error:
+    include-stacktrace: never
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    path: /api-docs
+    operationsSorter: method
+    config-url: /api-docs/swagger-config
+    url: /api-docs

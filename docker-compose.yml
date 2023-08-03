@@ -1,0 +1,19 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${PSQL_DB_NAME}
+      POSTGRES_USER: ${PSQL_DB_USER}
+      POSTGRES_PASSWORD: ${PSQL_DB_PASSWORD}
+    ports:
+      - 5432:${PSQL_DB_PORT}
+  app:
+    build: .
+    ports:
+      - 8080:${APP_PORT}
+    env_file:
+      - .env
+    depends_on:
+      - db

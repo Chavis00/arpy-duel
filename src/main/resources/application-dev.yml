@@ -1,0 +1,34 @@
+application:
+  title: Arpy - Duel
+  version: 0.1.0
+
+logging:
+  level:
+    root: ERROR
+    org:
+      hibernate: ERROR
+      springframework:
+        web: ERROR
+        security: INFO
+
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${PSQL_DB_HOST}:${PSQL_DB_PORT}/${PSQL_DB_NAME}?useSSL=false
+    username: ${PSQL_DB_USER}
+    password: ${PSQL_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  devtools:
+
+server:
+  port: ${APP_PORT}
+  error:
+    include-stacktrace: NEVER
+springdoc:
+  api-docs:
+    enabled: false
+    path: /api-docs
+  swagger-ui:
+    operationsSorter: method

@@ -1,0 +1,10 @@
+  A)aa                                         D)dddd                   l)L
+ A)  aa                                        D)   dd                   l)
+A)    aa  r)RRR  p)PPPP  y)   YY               D)    dd u)   UU e)EEEEE  l)
+A)aaaaaa r)   RR p)   PP y)   YY    #######    D)    dd u)   UU e)EEEE   l)
+A)    aa r)      p)   PP y)   YY               D)    dd u)   UU e)       l)
+A)    aa r)      p)PPPP   y)YYYY               D)ddddd   u)UUU   e)EEEE l)LL
+                 p)           y)
+                 p)      y)YYYY
+${application.title} ${application.version}
+Powered by Spring Boot ${spring-boot.version}

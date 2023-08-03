@@ -1,22 +1,26 @@
 package ar.edu.undef.fie.arpyduel.application.command_services;
 
 import ar.edu.undef.fie.arpyduel.application.command_queries.*;
-import ar.edu.undef.fie.arpyduel.domain.arma.tipo.ArmaTipo;
-import ar.edu.undef.fie.arpyduel.domain.arma.encantamientos.Basico;
-import ar.edu.undef.fie.arpyduel.domain.arma.encantamientos.DobleJugada;
-import ar.edu.undef.fie.arpyduel.domain.arma.encantamientos.Encantamiento;
-import ar.edu.undef.fie.arpyduel.domain.arma.tipo.Arco;
-import ar.edu.undef.fie.arpyduel.domain.arma.tipo.Baston;
-import ar.edu.undef.fie.arpyduel.domain.arma.tipo.Espada;
-import ar.edu.undef.fie.arpyduel.domain.clases.Cazador;
-import ar.edu.undef.fie.arpyduel.domain.clases.Clase;
-import ar.edu.undef.fie.arpyduel.domain.clases.Guerrero;
-import ar.edu.undef.fie.arpyduel.domain.clases.Mago;
-import ar.edu.undef.fie.arpyduel.domain.estado.Confuso;
-import ar.edu.undef.fie.arpyduel.domain.estado.ErrorDePunteria;
-import ar.edu.undef.fie.arpyduel.domain.estado.Estado;
-import ar.edu.undef.fie.arpyduel.domain.estado.QuemarMagia;
-import ar.edu.undef.fie.arpyduel.domain.items.efectosItem.*;
+import ar.edu.undef.fie.arpyduel.domain.duel_types.DuelEnum;
+import ar.edu.undef.fie.arpyduel.domain.duel_types.DuelType;
+import ar.edu.undef.fie.arpyduel.domain.duel_types.types.Friendly;
+import ar.edu.undef.fie.arpyduel.domain.duel_types.types.Normal;
+import ar.edu.undef.fie.arpyduel.domain.duel_types.types.Ranked;
+import ar.edu.undef.fie.arpyduel.domain.weapon_type.WeaponType;
+import ar.edu.undef.fie.arpyduel.domain.weapon_enchants.enchants.Basic;
+import ar.edu.undef.fie.arpyduel.domain.weapon_enchants.enchants.MirrorStrike;
+import ar.edu.undef.fie.arpyduel.domain.weapon_enchants.Enchant;
+import ar.edu.undef.fie.arpyduel.domain.weapon_type.types.Bow;
+import ar.edu.undef.fie.arpyduel.domain.weapon_type.types.Staff;
+import ar.edu.undef.fie.arpyduel.domain.weapon_type.types.Sword;
+import ar.edu.undef.fie.arpyduel.domain.character_class.classes.Hunter;
+import ar.edu.undef.fie.arpyduel.domain.character_class.CharacterClass;
+import ar.edu.undef.fie.arpyduel.domain.character_class.classes.Warrior;
+import ar.edu.undef.fie.arpyduel.domain.character_class.classes.Mage;
+import ar.edu.undef.fie.arpyduel.domain.item_debuff.debuffs.Confused;
+import ar.edu.undef.fie.arpyduel.domain.item_debuff.debuffs.AimDisruption;
+import ar.edu.undef.fie.arpyduel.domain.item_debuff.Debuff;
+import ar.edu.undef.fie.arpyduel.domain.item_debuff.debuffs.BurnMagic;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
@@ -25,86 +29,89 @@ import java.util.List;
 
 @Service
 public class ArpyInitCommandService implements CommandLineRunner {
-    private final FindEncantamientoCommandQuery findEncantamiento;
-    private final EncantamietoCommandService saveEncantamiento;
-    private final FindClaseCommandQuery findClase;
-    private final ClaseCommandService saveClase;
-    private final FindEstadoCommandQuery findEstado;
-    private final EstadoCommandService saveEstado;
-    private final FindItemEfectoCommandQuery findItem;
-    private final ItemEfectoCommandService saveItem;
-    private final FindArmaTipoCommandQuery findArmaTipo;
-    private final ArmaTipoCommandService saveArmaTipo;
+    private final FindEnchantCommandQuery enchantQuery;
+    private final EnchantCommandService enchantService;
+    private final FindClassCommandQuery classQuery;
+    private final ClassCommandService classService;
+    private final FindDebuffCommandQuery debuffQuery;
+    private final DebuffCommandService debuffService;
+
+    private final FindWeaponTypeCommandQuery weaponTypeQuery;
+    private final WeaponTypeCommandService weaponTypeService;
+    private final FindDuelTypeCommandQuery duelTypeQuery;
+    private final DuelTypeCommandService duelTypeService;
 
 
 
 
-    public ArpyInitCommandService(FindEncantamientoCommandQuery findEncantamiento, EncantamietoCommandService saveEncantamiento, FindClaseCommandQuery findClase, ClaseCommandService saveClase, FindEstadoCommandQuery findEstado, EstadoCommandService saveEstado, FindItemEfectoCommandQuery findItem, ItemEfectoCommandService saveItem, FindArmaTipoCommandQuery findArmaTipo, ArmaTipoCommandService saveArmaTipo) {
-        this.findEncantamiento = findEncantamiento;
-        this.saveEncantamiento = saveEncantamiento;
-        this.findClase = findClase;
-        this.saveClase = saveClase;
-        this.findEstado = findEstado;
-        this.saveEstado = saveEstado;
-        this.findItem = findItem;
-        this.saveItem = saveItem;
-        this.findArmaTipo = findArmaTipo;
-        this.saveArmaTipo = saveArmaTipo;
+    public ArpyInitCommandService(FindEnchantCommandQuery enchantQuery, EnchantCommandService enchantService, FindClassCommandQuery classQuery, ClassCommandService classService, FindDebuffCommandQuery debuffQuery, DebuffCommandService debuffService, FindWeaponTypeCommandQuery findArmaTipo, WeaponTypeCommandService weaponTypeService, FindDuelTypeCommandQuery duelTypeQuery, DuelTypeCommandService duelTypeService) {
+        this.enchantQuery = enchantQuery;
+        this.enchantService = enchantService;
+        this.classQuery = classQuery;
+        this.classService = classService;
+        this.debuffQuery = debuffQuery;
+        this.debuffService = debuffService;
+        this.weaponTypeQuery = findArmaTipo;
+        this.weaponTypeService = weaponTypeService;
+        this.duelTypeQuery = duelTypeQuery;
+        this.duelTypeService = duelTypeService;
     }
 
 
     @Override
     public void run(String... args) throws Exception {
-        if (findEncantamiento.countEncantamientos() == 0){
-            //INIT de Encantamientos
-            List<Encantamiento> encantamientosInitList = new ArrayList<Encantamiento>();
-            encantamientosInitList.add(new Basico("Basico"));
-            encantamientosInitList.add(new DobleJugada("Doble Jugada"));
+        if (enchantQuery.countEnchants() == 0){
+            //Enchanting INIT
+            List<Enchant> encantamientosInitList = new ArrayList<Enchant>();
+            encantamientosInitList.add(new Basic("Basic", "Basic weapon attack - No extra damage"));
+            encantamientosInitList.add(new MirrorStrike("Mirror Strike", "30% chance to deal double damage - 30% chance to deal 1/3 of the weapon damage to self - 40% chance to deal normal damage"));
 
-            saveEncantamiento.createAll(encantamientosInitList);
+            enchantService.createAll(encantamientosInitList);
         }
 
-        if (findClase.countClases() == 0){
-            //INIT de Clases
-            List<Clase> clasesInitList = new ArrayList<Clase>();
-            clasesInitList.add(new Cazador("Cazador"));
-            clasesInitList.add(new Guerrero("Guerrero"));
-            clasesInitList.add(new Mago("Mago"));
+        if (classQuery.countClasses() == 0){
+            //Classes INIT
+            List<CharacterClass> clasesInitList = new ArrayList<CharacterClass>();
+            clasesInitList.add(new Hunter("Hunter"));
+            clasesInitList.add(new Warrior("Warrior"));
+            clasesInitList.add(new Mage("Mage"));
 
-            saveClase.createAll(clasesInitList);
+            classService.createAll(clasesInitList);
         }
 
-        if (findEstado.countEstado() == 0){
-            //INIT de Estados
-            List<Estado> estadosInitList = new ArrayList<Estado>();
-            estadosInitList.add(new Confuso());
-            estadosInitList.add(new ErrorDePunteria());
-            estadosInitList.add(new QuemarMagia());
+        var debuffs = new ArrayList<Debuff>();
+        if (debuffQuery.countDebuffs() == 0){
+            //Debuff INIT
+            debuffs.add(new Confused("Confusion", "25% chance of confusion hit"));
+            debuffs.add(new AimDisruption("Aim Disruption", "Aim Disruption"));
+            debuffs.add(new BurnMagic("Burn Magic", "Hit opponent with 40% of his spell power"));
 
-            saveEstado.createAll(estadosInitList);
+            debuffService.createAll(debuffs);
         }
 
-        if (findItem.count() == 0){
-            //INIT de Items
-            List<ItemEfecto> ItemInitList = new ArrayList<ItemEfecto>();
-            ItemInitList.add(new AplicarQuemarMagia());
-            ItemInitList.add(new AplicarConfusion());
-            ItemInitList.add(new AplicarErrorDePunteria());
-            ItemInitList.add(new Cura());
 
-            saveItem.createAll(ItemInitList);
+        if (weaponTypeQuery.countWeaponTypes() == 0){
+
+            List<WeaponType> armaTiposInitList = new ArrayList<WeaponType>();
+            armaTiposInitList.add(new Bow());
+            armaTiposInitList.add(new Sword());
+            armaTiposInitList.add(new Staff());
+
+            weaponTypeService.createAll(armaTiposInitList);
         }
+        if (duelTypeQuery.countWeaponTypes() == 0){
 
-        if (findArmaTipo.countArmaTipos() == 0){
+            List<DuelType> duelTypesInit = new ArrayList<>();
+            var availableTypes = DuelEnum.values();
+            var ranked = new Ranked(DuelEnum.RANKED);
+            var normal = new Normal(DuelEnum.NORMAL);
+            var friendly = new Friendly(DuelEnum.FRIENDLY);
+            duelTypesInit.add(ranked);
+            duelTypesInit.add(normal);
+            duelTypesInit.add(friendly);
 
-            List<ArmaTipo> armaTiposInitList = new ArrayList<ArmaTipo>();
-            armaTiposInitList.add(new Arco());
-            armaTiposInitList.add(new Espada());
-            armaTiposInitList.add(new Baston());
-
-            saveArmaTipo.createAll(armaTiposInitList);
+            duelTypeService.createAll(duelTypesInit);
         }
-
     }
 
 }
