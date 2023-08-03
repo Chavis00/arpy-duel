@@ -5,7 +5,7 @@ FROM amazoncorretto:17
 RUN mkdir /app
 ENV APP_HOME=/app \
     APP_NAME=arpy-duel \
-    APP_VERSION=0.0.1-SNAPSHOT \
+    APP_VERSION=0.1.0-SNAPSHOT \
     GRADLE_OPTS="-Dorg.gradle.daemon=false"
 
 # Working directory
