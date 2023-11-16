@@ -23,12 +23,11 @@ jobs:
         username: ${{ secrets.AzureAppService_ContainerUsername_8761a1b1b91f47ac93b476c454c4cf66 }}
         password: ${{ secrets.AzureAppService_ContainerPassword_e6dbc77a970f42d4b6bb084a20eff1e2 }}
 
-    - name: Build and push container image to registry
-      uses: docker/build-push-action@v3
-      with:
-        push: true
-        tags: mcr.microsoft.com/arpy/appsvc/staticsite:${{ github.sha }}
-        file: ./dockerfile
+    - name: Build container image
+      run: docker build -t mcr.microsoft.com/arpy/appsvc/staticsite:${{ github.sha }} -f ./dockerfile .
+
+    - name: Push container image
+      run: docker push mcr.microsoft.com/arpy/appsvc/staticsite:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
