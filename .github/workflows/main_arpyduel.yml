@@ -19,4 +19,4 @@ jobs:
         context: .
         file: dockerfile
         push: true
-        tags: ghcr.io/arpyduel:latest
+        tags: ghcr.io/chavis00/arpyduel:latest
